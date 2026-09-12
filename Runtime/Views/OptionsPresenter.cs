@@ -4,6 +4,7 @@ Yarn Spinner is licensed to you under the terms found in the file LICENSE.md.
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Yarn.Unity.Attributes;
 
 #if USE_TMP
@@ -264,6 +265,10 @@ namespace Yarn.Unity
             }
             if (optionIndexToSelect > -1)
             {
+                // Deselect first: fixes issue where none of the options are selected after initial display (Gamepad)
+                if (EventSystem.current != null) {
+                    EventSystem.current.SetSelectedGameObject(null);
+                }
                 optionViews[optionIndexToSelect].Select();
             }
 
