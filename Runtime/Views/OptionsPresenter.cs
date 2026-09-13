@@ -4,6 +4,7 @@ Yarn Spinner is licensed to you under the terms found in the file LICENSE.md.
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Yarn.Unity.Attributes;
 
 #if USE_TMP
@@ -63,6 +64,8 @@ namespace Yarn.Unity
         /// </summary>
         [Space]
         public bool showUnavailableOptions = false;
+        [Tooltip("Whether to remember the last selected option index, and use it as the default selection for the next set of options. When unchecked it always starts at the first available option.")]
+        public bool rememberLastOptionIndex = true;
 
         [Group("Fade")]
         [Label("Fade UI")]
@@ -247,7 +250,7 @@ namespace Yarn.Unity
                     continue;
                 }
 
-                if (view.IsHighlighted)
+                if (rememberLastOptionIndex && view.IsHighlighted)
                 {
                     optionIndexToSelect = i;
                     break;
@@ -264,6 +267,10 @@ namespace Yarn.Unity
             }
             if (optionIndexToSelect > -1)
             {
+                // Deselect first: fixes issue where none of the options are selected after initial display (Gamepad)
+                if (EventSystem.current != null) {
+                    EventSystem.current.SetSelectedGameObject(null);
+                }
                 optionViews[optionIndexToSelect].Select();
             }
 
